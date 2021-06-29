@@ -1,0 +1,43 @@
+{
+  "name": "layer-vue3",
+  "description": "layer-vue3 component",
+  "author": "'finalsummer' <'642661520de@gmail.com'>",
+  "license": "MIT",
+  "private": false,
+  "files": ["lib","packages"],
+  "main": "./lib/layer-vue.umd.js",
+  "module": "./lib/layer-vue.es.js",
+  "exports": {
+    ".": {
+      "import": "./lib/layer-vue.es.js",
+      "require": "./lib/layer-vue.umd.js"
+    }
+  },
+  "version": "0.0.0",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "serve": "vite preview"
+  },
+  "dependencies": {
+    "vue": "^3.0.5"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^1.2.3",
+    "@vue/compiler-sfc": "^3.0.5",
+    "vite": "^2.3.8"
+  },
+  "keywords": [
+    "layer",
+    "vue",
+    "vue3",
+    "layer-vue",
+    "layer-vue3",
+    "finalsummer"
+  ],
+  "homepage": "http://layer-vue.cn/vue3",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/642661520/layer-vue3.git"
+  }
+}
