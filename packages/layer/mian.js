@@ -21,31 +21,7 @@ const data = {
   // display
   display: undefined,
   // 皮肤
-  defskin: {
-    background: "#fff",
-    boxShadow: "1px 1px 50px rgb(0 0 0 / 30%)",
-    title: {
-      background: "#fff",
-      color: "#000",
-      borderBottom: "1px solid #f0f0f0",
-    },
-    content: {
-      background: "#fff",
-      color: "#000",
-    },
-    maxmin: {
-      background: "#fff",
-      color: "#000",
-      backgroundHover: "#6666",
-      colorHover: "#008afc",
-    },
-    close: {
-      background: "#fff",
-      color: "#000",
-      backgroundHover: "#f00",
-      colorHover: "#fff",
-    },
-  },
+  defskin: {},
   // 用于记录初始状态
   initdata: { x: 0, y: 0, width: 300, height: 200 },
   defborderwidth: 0,
@@ -80,6 +56,7 @@ let LayerVue = (app) => {
     const LayerOptions = app.config.globalProperties.$layer.o;
     if (options.id) {
       let index = findIndex(options.id, LayerOptions);
+      console.log(index);
       const vm = LayerOptions.instances[index];
       if (vm) {
         if (!vm.destroyOnClose) {
@@ -127,12 +104,19 @@ let LayerVue = (app) => {
       }
     }
     let index = LayerOptions.instances.length;
+    LayerOptions.instances.push(undefined);
     newdata.index = index;
     newdata.model = 1;
     newLayerVueConstructor.data = () => {
       return { ...newdata };
     };
     const vm = createVNode(newLayerVueConstructor, { ...options }, isVNode(content) ? { default: () => content } : null);
+    vm.props.onDestroy = () => {
+      if (vm.props.destroyOnClose) {
+        delete LayerOptions.instances[index]
+        render(null, container)
+      }
+    }
     vm.appContext = app._context;
     const container = document.createElement("div");
     render(vm, container);
@@ -141,7 +125,6 @@ let LayerVue = (app) => {
     } else {
       document.body.appendChild(container.firstElementChild);
     }
-    LayerOptions.instances.push(undefined);
     return index;
   };
   layer.close = async (index) => {
