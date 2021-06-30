@@ -77,6 +77,8 @@ let LayerVue = (app) => {
     // 强制删除传入的visible属性
     delete options.visible;
     const newdata = { ...data };
+    // console.log(LayerVueConstructor.setup());
+    
     const newLayerVueConstructor = { ...LayerVueConstructor };
     // 合并全局皮肤配置到默认配置
     const { skin } = LayerOptions;
@@ -113,6 +115,8 @@ let LayerVue = (app) => {
     const vm = createVNode(newLayerVueConstructor, { ...options }, isVNode(content) ? { default: () => content } : null);
     vm.props.onDestroy = () => {
       if (vm.props.destroyOnClose) {
+        console.log(vm);
+        
         delete LayerOptions.instances[index]
         render(null, container)
       }
@@ -120,11 +124,15 @@ let LayerVue = (app) => {
     vm.appContext = app._context;
     const container = document.createElement("div");
     render(vm, container);
-    if (document.querySelector(options.el)) {
+    if (document.querySelector(options.el || "#app")) {
       document.querySelector(options.el || "#app").appendChild(container.firstElementChild);
     } else {
       document.body.appendChild(container.firstElementChild);
     }
+    vm.component.proxy.titlexxx='123131231231'
+    vm.component.proxy.defvisible = true;
+    console.log(vm.component.proxy);
+    
     return index;
   };
   layer.close = async (index) => {

@@ -96,11 +96,14 @@ export default {
     },
     open4() {
       this.layer4.index = this.$layer({
+        el:'body',
         id: this.layer4.id,
         destroyOnClose: true,
         content: "4.内容区是文本,destroyOnClose:true,传id,销毁之后可以重新打开",
         success: () => {
           this.layer4.dom = "打开了";
+          this.$layer.o.instances[this.layer4.index].titlexxx=this.layer4.index
+          
         },
         cancel: () => {
           this.layer4.dom = "隐藏了";

@@ -244,7 +244,8 @@ export default {
   },
   emits: ["destroy", "update:visible"],
   setup(props, { attrs, slots, emit }) {
-    
+    const tttt=1;
+    return {tttt}
   },
   computed: {
     contentheight: function () {
@@ -328,9 +329,9 @@ export default {
     }
   },
   mounted() {
-    if (this.model) {
-      this.defvisible = true;
-    }
+    // if (this.model) {
+    //   this.defvisible = true;
+    // }
     const { width, height } = this.minareainit();
     this.minwidth = width;
     this.minheight = height;
