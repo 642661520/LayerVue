@@ -28,6 +28,7 @@
       layer4.dom
     }};测试结果：{{ layer4.result }}
   </h4>
+  <div  id="divtest" style="display:none">123</div>
 </template>
 
 <script>
@@ -44,6 +45,7 @@ export default {
     open1() {
       this.layer1.index = this.$layer({
         content: "1.内容区是文本,destroyOnClose:true,不传id,会重复打开",
+        // content:document.getElementById('divtest'),
         success: () => {
           this.layer1.dom = "打开了";
         },

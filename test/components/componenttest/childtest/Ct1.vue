@@ -6,18 +6,28 @@
     窗口状态:{{ test1.dom }}
   </h4>
   <layer-vue
+  id="Ct1-layer1"
     v-model:visible="test1.visible"
     :destroyOnClose="true"
+    :settop='true'
     :maxmin="[1, 1]"
+    :area="[200,600]"
+    :offset="[100,200]"
     :skin="{
-      title:{
-        color:'#bfa',
-        background:'#5ba'
-      }}"
+      title: {
+        color: '#bfa',
+        background: '#5ba',
+      },
+      maxmin: { color: '#789' },
+    }"
+    :isMax='true'
     :success="success1"
     :cancel="cancel1"
     :end="end1"
-    >1.内容区是文本,destroyOnClose:true</layer-vue
+    >
+    <div style="display:none">1.内容区是文本,destroyOnClose:true</div>
+    <!-- 1.内容区是文本,destroyOnClose:true -->
+    </layer-vue
   >
   <h4>
     2.内容区是文本,destroyOnClose:false,
@@ -25,22 +35,17 @@
     窗口状态:{{ test2.dom }}
   </h4>
   <layer-vue
-    v-model:visible="test2.visible"
-    :destroyOnClose="false"
-    :maxmin="[1, 1]"
-    skin="mac"
-    :success="success2"
-    :cancel="cancel2"
-    :end="end2"
-    >1.内容区是文本,destroyOnClose:false</layer-vue
-  >
+  id="Ct1-layer2" :settop='true'
+   v-model:visible="test2.visible" :destroyOnClose="false" :maxmin="[1, 1]" skin="mac" :success="success2" :cancel="cancel2" :end="end2">
+    <div style="display:none">1.内容区是文本,destroyOnClose:false</div>
+    </layer-vue>
 </template>
 
 <script>
 export default {
   data() {
     return {
-      test1: { visible: false, dom: "待测试" },
+      test1: { visible: true, dom: "待测试" },
       test2: { visible: false, dom: "待测试" },
     };
   },

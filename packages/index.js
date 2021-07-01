@@ -55,6 +55,7 @@ LayerVue.install = (app, options = {}) => {
       return vue.$layer.o.zindex;
     },
     instances: [],
+    
   };
 };
 export default LayerVue;

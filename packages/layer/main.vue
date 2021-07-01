@@ -1,8 +1,9 @@
 <template>
-  <transition name="layer" @after-leave="$emit('destroy')">
+  <transition name="layer" @before-enter="beforeenter" @enter="enter" @after-enter="afterenter" @after-leave="afterleave">
     <div
       v-if="model ? true : destroyOnClose ? defvisible : true"
       v-show="defvisible"
+      οndragstart="return false;"
       :data-index="index"
       :data-anim="anim"
       :data-id="id"
@@ -42,11 +43,7 @@
         }"
         @mousedown="minmovefun"
       >
-        <div
-          class="layer-vue-title-text"
-          :title="deftitle"
-          :style="{ width: textwidth + 'px' }"
-        >
+        <div class="layer-vue-title-text" :title="deftitle" :style="{ width: textwidth + 'px' }">
           {{ deftitle }}
         </div>
         <div
@@ -57,71 +54,24 @@
           }"
         >
           <span v-show="maxmin[1]" class="layer-vue-min" @click="minfun">
-            <svg
-              v-show="!minbtn"
-              t="1623989554257"
-              class="icon"
-              viewBox="0 0 1024 1024"
-              version="1.1"
-              xmlns="http://www.w3.org/2000/svg"
-              p-id="2299"
-              width="16"
-              height="16"
-            >
-              <path
-                d="M128 512h768a25.6 25.6 0 1 1 0 51.2h-768a25.6 25.6 0 1 1 0-51.2z"
-                p-id="2300"
-              ></path>
+            <svg v-show="!minbtn" t="1623989554257" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2299" width="16" height="16">
+              <path d="M128 512h768a25.6 25.6 0 1 1 0 51.2h-768a25.6 25.6 0 1 1 0-51.2z" p-id="2300"></path>
             </svg>
-            <svg
-              v-show="minbtn"
-              t="1623989831113"
-              class="icon"
-              viewBox="0 0 1024 1024"
-              version="1.1"
-              xmlns="http://www.w3.org/2000/svg"
-              p-id="2537"
-              width="16"
-              height="16"
-            >
+            <svg v-show="minbtn" t="1623989831113" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2537" width="16" height="16">
               <path
                 d="M959.72 0H294.216a63.96 63.96 0 0 0-63.96 63.96v127.92H64.28A63.96 63.96 0 0 0 0.32 255.84V959.4a63.96 63.96 0 0 0 63.96 63.96h703.56a63.96 63.96 0 0 0 63.96-63.96V792.465h127.92a63.96 63.96 0 0 0 63.96-63.96V63.96A63.96 63.96 0 0 0 959.72 0zM767.84 728.505V959.4H64.28V255.84h703.56z m189.322 0H831.8V255.84a63.96 63.96 0 0 0-63.96-63.96H294.216V63.96H959.72z"
                 p-id="2538"
               ></path>
             </svg>
           </span>
-          <span
-            v-show="maxmin[0] && !minbtn"
-            class="layer-vue-max"
-            @click="maxfun"
-          >
-            <svg
-              v-show="!maxbtn"
-              t="1623988846084"
-              class="icon"
-              viewBox="0 0 1024 1024"
-              version="1.1"
-              xmlns="http://www.w3.org/2000/svg"
-              p-id="1720"
-              width="16"
-              height="16"
-            >
+          <span v-show="maxmin[0] && !minbtn" class="layer-vue-max" @click="maxfun">
+            <svg v-show="!maxbtn" t="1623988846084" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1720" width="16" height="16">
               <path
                 d="M918.14912 546.53952l0 282.50112c0 48.85504-39.76192 88.59648-88.6272 88.59648l-634.9824 0c-48.87552 0-88.63744-39.74144-88.63744-88.59648L105.90208 194.74432c0-48.85504 39.76192-88.60672 88.63744-88.60672L477.7984 106.1376c-15.24736 15.64672-25.38496 36.29056-27.60704 59.22816L194.52928 165.36576c-16.20992 0-29.39904 13.17888-29.39904 29.37856l0 634.29632c0 16.18944 13.18912 29.36832 29.39904 29.36832l634.9824 0c16.20992 0 29.39904-13.17888 29.39904-29.36832L858.91072 574.1056C881.2032 571.96544 901.888 562.37056 918.14912 546.53952zM573.93152 188.90752l193.6384 0L454.13376 502.35392c-17.34656 17.34656-17.34656 45.47584 0 62.8224 17.34656 17.34656 45.47584 17.34656 62.8224 0.01024l313.43616-313.4464 0 193.64864c0 24.53504 19.88608 44.42112 44.42112 44.42112 12.26752 0 23.37792-4.95616 31.41632-13.0048 8.0384-8.05888 13.01504-19.1488 13.01504-31.41632L919.2448 144.47616c0-24.53504-19.88608-44.42112-44.42112-44.42112L573.93152 100.05504c-24.53504 0-44.42112 19.88608-44.42112 44.43136C529.50016 169.02144 549.39648 188.90752 573.93152 188.90752z"
                 p-id="1721"
               ></path>
             </svg>
-            <svg
-              v-show="maxbtn"
-              t="1623989831113"
-              class="icon"
-              viewBox="0 0 1024 1024"
-              version="1.1"
-              xmlns="http://www.w3.org/2000/svg"
-              p-id="2537"
-              width="16"
-              height="16"
-            >
+            <svg v-show="maxbtn" t="1623989831113" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2537" width="16" height="16">
               <path
                 d="M959.72 0H294.216a63.96 63.96 0 0 0-63.96 63.96v127.92H64.28A63.96 63.96 0 0 0 0.32 255.84V959.4a63.96 63.96 0 0 0 63.96 63.96h703.56a63.96 63.96 0 0 0 63.96-63.96V792.465h127.92a63.96 63.96 0 0 0 63.96-63.96V63.96A63.96 63.96 0 0 0 959.72 0zM767.84 728.505V959.4H64.28V255.84h703.56z m189.322 0H831.8V255.84a63.96 63.96 0 0 0-63.96-63.96H294.216V63.96H959.72z"
                 p-id="2538"
@@ -129,16 +79,7 @@
             </svg>
           </span>
           <span v-show="closeBtn" class="layer-vue-close" @click="closefun">
-            <svg
-              t="1623989504811"
-              class="icon"
-              viewBox="0 0 1024 1024"
-              version="1.1"
-              xmlns="http://www.w3.org/2000/svg"
-              p-id="2061"
-              width="16"
-              height="16"
-            >
+            <svg t="1623989504811" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2061" width="16" height="16">
               <path
                 d="M563.3 509l352.3-352.3c13.9-13.9 13.9-36.4 0-50.3-13.9-13.9-36.4-13.9-50.3 0L513 458.7 160.7 106.4c-13.9-13.9-36.4-13.9-50.3 0-13.9 13.9-13.9 36.4 0 50.3L462.7 509 110.4 861.3c-13.9 13.9-13.9 36.4 0 50.3 6.9 6.9 16.1 10.4 25.2 10.4s18.2-3.5 25.2-10.4L513 559.3l352.3 352.3c6.9 6.9 16.1 10.4 25.2 10.4s18.2-3.5 25.2-10.4c13.9-13.9 13.9-36.4 0-50.3L563.3 509z"
                 p-id="2062"
@@ -147,37 +88,16 @@
           </span>
         </div>
       </div>
-      <span
-        v-show="closeBtn && !title"
-        :class="{ 'layer-vue-close2': !title }"
-        @click="closefun"
-      >
-        <svg
-          t="1623989504811"
-          class="icon"
-          viewBox="0 0 1024 1024"
-          version="1.1"
-          xmlns="http://www.w3.org/2000/svg"
-          p-id="2061"
-          width="16"
-          height="16"
-        >
+      <span v-show="closeBtn && !title" :class="{ 'layer-vue-close2': !title }" @click="closefun">
+        <svg t="1623989504811" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2061" width="16" height="16">
           <path
             d="M563.3 509l352.3-352.3c13.9-13.9 13.9-36.4 0-50.3-13.9-13.9-36.4-13.9-50.3 0L513 458.7 160.7 106.4c-13.9-13.9-36.4-13.9-50.3 0-13.9 13.9-13.9 36.4 0 50.3L462.7 509 110.4 861.3c-13.9 13.9-13.9 36.4 0 50.3 6.9 6.9 16.1 10.4 25.2 10.4s18.2-3.5 25.2-10.4L513 559.3l352.3 352.3c6.9 6.9 16.1 10.4 25.2 10.4s18.2-3.5 25.2-10.4c13.9-13.9 13.9-36.4 0-50.3L563.3 509z"
             p-id="2062"
           ></path>
         </svg>
       </span>
-      <div
-        v-if="resize[0] && !maxbtn"
-        class="layer-vue-resize"
-        @mousedown="rbresizefun"
-      ></div>
-      <div
-        v-if="resize[1] && !maxbtn"
-        class="layer-vue-lbresize"
-        @mousedown="lbresizefun"
-      ></div>
+      <div v-if="resize[0] && !maxbtn" class="layer-vue-resize" @mousedown="rbresizefun"></div>
+      <div v-if="resize[1] && !maxbtn" class="layer-vue-lbresize" @mousedown="lbresizefun"></div>
       <div
         ref="content"
         class="layer-vue-content"
@@ -242,10 +162,10 @@ export default {
     isMax: { type: Boolean, default: false },
     shape: { type: Array, default: () => [0, 0] },
   },
-  emits: ["destroy", "update:visible"],
+  emits: ["destroy", "update:visible", "update:isMax"],
   setup(props, { attrs, slots, emit }) {
-    const tttt=1;
-    return {tttt}
+    const tttt = 1;
+    return { tttt };
   },
   computed: {
     contentheight: function () {
@@ -262,10 +182,7 @@ export default {
       return h;
     },
     textwidth: function () {
-      return (
-        this.width -
-        ((this.maxmin[0] ? 35 : 0) + (this.maxmin[1] ? 35 : 0) + 50)
-      );
+      return this.width - ((this.maxmin[0] ? 35 : 0) + (this.maxmin[1] ? 35 : 0) + 50);
     },
   },
   watch: {
@@ -285,10 +202,6 @@ export default {
           this.init();
           this.success && this.success(this.$el, this.index, this.id);
         });
-      } else {
-        if (!this.destroyOnClose) {
-          this.cancel && this.cancel(this.$el, this.index, this.id);
-        }
       }
     },
     reset: function () {
@@ -313,14 +226,13 @@ export default {
     },
   },
   created() {
-    if (!this.visible) {
-      this.defvisible = this.visible;
-    }
+    console.log(this.id, "created");
     this.deftitle = this.title;
     this.defskin = this.$layer.o.skin;
     window.addEventListener("resize", this.resizefun);
     if (this.visible || this.visible === undefined) {
       if (this.settop) {
+        console.log(this.id, "settop");
         const zindex = this.$layer.o.settop();
         this.zIndex = zindex;
       } else {
@@ -329,9 +241,7 @@ export default {
     }
   },
   mounted() {
-    // if (this.model) {
-    //   this.defvisible = true;
-    // }
+    console.log(this.id, "mounted");
     const { width, height } = this.minareainit();
     this.minwidth = width;
     this.minheight = height;
@@ -350,27 +260,10 @@ export default {
     } else if (typeof this.skin === "string") {
       this.defskin = this.skin;
     }
-    this.$nextTick(() => {
-      try {
-        if (this.$refs.content.children.length) {
-          this.display = this.$refs.content.children[0].style.display;
-        }
-      } catch (error) {
-        this.$layer.o.log && console.warn("[layer warn]:not find children");
-      }
-      if (this.visible || this.visible === undefined) {
-        if (this.settop) {
-          const zindex = this.$layer.o.settop();
-          this.zIndex = zindex;
-        } else {
-          this.zIndex = this.zindex;
-        }
-        this.init();
-        // this.success && this.success(this.$el, this.index, this.id);
-      }
-    });
+    this.defvisible = this.visible;
   },
-  beforeDestroy() {
+  beforeUnmount() {
+    console.log("beforeUnmount");
     window.removeEventListener("resize", this.resizefun);
   },
   methods: {
@@ -386,10 +279,7 @@ export default {
           if (!parseInt(this.moveOut[3]) && newX <= 0) {
             newX = 0;
           }
-          if (
-            !parseInt(this.moveOut[1]) &&
-            newX >= document.documentElement.clientWidth - this.minwidth
-          ) {
+          if (!parseInt(this.moveOut[1]) && newX >= document.documentElement.clientWidth - this.minwidth) {
             newX = document.documentElement.clientWidth - this.minwidth;
           }
           this.x = newX;
@@ -442,15 +332,25 @@ export default {
       this.width = this.initdata.width;
       this.height = this.initdata.height;
     },
+    beforeenter() {},
+    enter() {},
+    afterenter() {
+      console.log("afterenter");
+      try {
+        if (this.$refs.content.children.length) {
+          this.display = this.$refs.content.children[0].style.display;
+        }
+      } catch (error) {
+        this.$layer.o.log && console.warn("[layer warn]:not find children");
+      }
+    },
     // 初始化函数
     init() {
+      console.log("this.init");
       this.maxbtn = false;
       this.minbtn = false;
       if (this.$refs.content.children.length) {
-        if (
-          this.display === "none" ||
-          getComputedStyle(this.$refs.content.children[0]).display === "none"
-        ) {
+        if (this.display === "none" || getComputedStyle(this.$refs.content.children[0]).display === "none") {
           this.$refs.content.children[0].style.display = "block";
         }
       }
@@ -493,11 +393,7 @@ export default {
       let children = false;
       if (this.area instanceof Array) {
         width = this.tf(this.area[0], "clientWidth");
-        if (
-          this.$refs.content &&
-          this.$refs.content.children &&
-          this.$refs.content.children.length > 0
-        ) {
+        if (this.$refs.content && this.$refs.content.children && this.$refs.content.children.length > 0) {
           children = true;
         }
         if (this.area[1]) {
@@ -513,18 +409,12 @@ export default {
         }
         height = children ? this.$refs.content.children[0].scrollHeight : 0;
       }
-      if (
-        width > document.documentElement.clientWidth &&
-        document.documentElement.clientWidth > this.minwidth
-      ) {
+      if (width > document.documentElement.clientWidth && document.documentElement.clientWidth > this.minwidth) {
         width = document.documentElement.clientWidth;
       } else if (width <= this.minwidth) {
         width = this.minwidth;
       }
-      if (
-        height > document.documentElement.clientHeight &&
-        document.documentElement.clientHeight > this.minheight
-      ) {
+      if (height > document.documentElement.clientHeight && document.documentElement.clientHeight > this.minheight) {
         height = document.documentElement.clientHeight;
       } else if (height <= this.minheight) {
         height = this.minheight;
@@ -562,10 +452,7 @@ export default {
       } else if (offset.substr(-2).indexOf("px") === 0) {
         y = parseInt(offset.slice(0, -2));
       } else if (offset.substr(-1).indexOf("%") === 0) {
-        y =
-          document.documentElement.clientHeight *
-          parseInt(offset.slice(0, -1)) *
-          0.01;
+        y = document.documentElement.clientHeight * parseInt(offset.slice(0, -1)) * 0.01;
       } else {
         switch (offset) {
           case "auto":
@@ -621,106 +508,35 @@ export default {
       } else if (value.substr(-2).indexOf("px") === 0) {
         name = parseInt(value.slice(0, -2));
       } else if (value.substr(-1).indexOf("%") === 0) {
-        name =
-          document.documentElement[client] *
-          parseInt(value.slice(0, -1)) *
-          0.01;
+        name = document.documentElement[client] * parseInt(value.slice(0, -1)) * 0.01;
       } else {
         name = parseInt(value);
       }
       return name;
     },
+    afterleave() {
+      console.log("afterleave");
+      if (this.destroyOnClose) {
+        if (this.model) {
+          this.$emit("destroy");
+        }
+        this.end && this.end();
+      } else {
+        this.cancel && this.cancel(this.$el, this.index, this.id);
+      }
+    },
     // 关闭窗口函数
     close() {
-      // 隐藏窗口
       if (!this.defvisible) {
-        this.$layer.o.log &&
-          console.warn("[layer-warn]layer-vue-" + this.index + " is closed");
+        this.$layer.o.log && console.warn("[layer-warn]layer-vue-" + this.index + " is closed");
         return false;
       }
-      this.defvisible = false;
-      if (!this.model) {
-        // 若传入了visible，则更新visible为false
+      this.$emit("update:visible", false);
+      this.$nextTick(() => {
         if (this.visible) {
-          this.$emit("update:visible", false);
+          this.defvisible = false;
         }
-      }
-
-      if (!this.destroyOnClose) {
-        // this.cancel && this.cancel(this.$el, this.index, this.id);
-        return true;
-      } else {
-        this.end && this.end(this.$el, this.index, this.id);
-        return true;
-      }
-      return;
-      // 获取窗口DOM元素
-      const layerDOM = document.getElementById("layer-vue-" + this.index);
-      const warn = () =>
-        console.warn(
-          "[layer-warn]:No layer with id ：layer-vue-" + this.index + "found"
-        );
-      // 判断当前layer窗口打开模式（true：以$layer.open()打开，false:以组件形式）
-      if (this.model) {
-        // this.visible=false
-        // 窗口配置项，关闭后则为null
-        const instances = this.$layer.o.instances[this.index];
-        // 判断窗口配置项是否存在
-        if (instances) {
-          // 判断内容区是否是DOM
-          if (this.ishtml) {
-            // 判断窗口DOM元素是否存在
-            if (layerDOM) {
-              // 获取内容区外层DOM
-              const content = layerDOM.querySelector(".layer-vue-content");
-              // 判断内容区是否是新建DOM
-              if (this.isnewDOM) {
-                console.log(1);
-                // 删除新建DOM
-                content.removeChild(content.children[0]);
-              } else {
-                // 判断窗口父元素是否存在
-                if (layerDOM.parentNode) {
-                  // 还原内容区位置
-                  const parentDiv = layerDOM.parentNode;
-                  content.children[0].style.display = this.display;
-                  parentDiv.insertBefore(content.children[0], layerDOM);
-                  parentDiv.removeChild(layerDOM);
-                  this.$destroy();
-                  delete this.$layer.o.instances[this.index];
-                  // 销毁窗口回调
-                  this.end && this.end(this.$el, this.index, this.id);
-                } else {
-                  // 窗口不存在或已经关闭
-                  this.$layer.o.log && warn();
-                  return false;
-                }
-                return true;
-              }
-            } else {
-              // 窗口不存在或已经关闭
-              this.$layer.o.log && warn();
-              return false;
-            }
-            // TODO 判断子组件是否存在
-          } else if (instances.Vuecomponent) {
-            instances.Vuecomponent.$destroy();
-          }
-        }
-
-        // 判断layer窗口是否存在
-        if (layerDOM) {
-          // 删除layerDOM
-          layerDOM.parentNode.removeChild(layerDOM);
-          // this.$destroy();
-          delete this.$layer.o.instances[this.index];
-        } else {
-          this.$layer.o.log && warn();
-          return false;
-        }
-      }
-      this.end && this.end(this.$el, this.index, this.id);
-      return true;
+      });
     },
     closefun() {
       return new Promise((res) => {
@@ -872,10 +688,7 @@ export default {
       this.$el.querySelector(this.move).style.cursor = "move";
     },
     movefun(move) {
-      if (
-        this.$el.querySelector(move) &&
-        this.$el.querySelector(move).onmousedown === null
-      ) {
+      if (this.$el.querySelector(move) && this.$el.querySelector(move).onmousedown === null) {
         this.$el.querySelector(move).style.cursor = "move";
         this.$el.querySelector(move).onmousedown = (e1) => {
           if (this.$el.className.indexOf("layer-vue-ismax") >= 0) {
@@ -891,10 +704,7 @@ export default {
               if (!parseInt(this.moveOut[3]) && newX <= 0) {
                 newX = 0;
               }
-              if (
-                !parseInt(this.moveOut[1]) &&
-                newX >= document.documentElement.clientWidth - this.minwidth
-              ) {
+              if (!parseInt(this.moveOut[1]) && newX >= document.documentElement.clientWidth - this.minwidth) {
                 newX = document.documentElement.clientWidth - this.minwidth;
               }
               this.x = newX;
@@ -912,20 +722,14 @@ export default {
               if (!parseInt(this.moveOut[3]) && newX <= 0) {
                 newX = 0;
               }
-              if (
-                !parseInt(this.moveOut[1]) &&
-                newX >= document.documentElement.clientWidth - this.width
-              ) {
+              if (!parseInt(this.moveOut[1]) && newX >= document.documentElement.clientWidth - this.width) {
                 newX = document.documentElement.clientWidth - this.width;
               }
               let newY = parseInt(y) + parseInt(moveY);
               if (!parseInt(this.moveOut[0]) && newY <= 0) {
                 newY = 0;
               }
-              if (
-                !parseInt(this.moveOut[2]) &&
-                newY >= document.documentElement.clientHeight - this.height
-              ) {
+              if (!parseInt(this.moveOut[2]) && newY >= document.documentElement.clientHeight - this.height) {
                 newY = document.documentElement.clientHeight - this.height;
               }
               this.x = newX;
@@ -982,7 +786,7 @@ export default {
     .layer-vue-min,
     .layer-vue-max {
       background: var(--mbc);
-      fill: var(--mc);
+      fill: v-bind("defskin.maxmin?.color");
     }
 
     .layer-vue-min:hover,
@@ -1073,13 +877,7 @@ export default {
 
     .layer-vue-title {
       background: rgba(46, 140, 255, 1);
-      background: linear-gradient(
-        to bottom,
-        rgba(46, 140, 255, 1) 0%,
-        rgba(2, 84, 226, 1) 16%,
-        rgba(2, 85, 239, 1) 85%,
-        rgba(46, 140, 255, 1) 100%
-      );
+      background: linear-gradient(to bottom, rgba(46, 140, 255, 1) 0%, rgba(2, 84, 226, 1) 16%, rgba(2, 85, 239, 1) 85%, rgba(46, 140, 255, 1) 100%);
     }
 
     .layer-vue-content {
@@ -1099,19 +897,11 @@ export default {
         border: 2px solid white;
         border-radius: 5px;
         line-height: 32px;
-        background: radial-gradient(
-          ellipse at center,
-          rgb(255, 0, 0) 45%,
-          rgb(255, 199, 199) 100%
-        );
+        background: radial-gradient(ellipse at center, rgb(255, 0, 0) 45%, rgb(255, 199, 199) 100%);
       }
 
       span:hover {
-        background: radial-gradient(
-          ellipse at center,
-          rgb(255, 0, 0) 45%,
-          rgb(255, 47, 47) 100%
-        );
+        background: radial-gradient(ellipse at center, rgb(255, 0, 0) 45%, rgb(255, 47, 47) 100%);
       }
     }
   }
@@ -1171,13 +961,7 @@ export default {
       .layer-vue-close {
         width: 40px;
         box-shadow: inset 0 0 2px 0px white;
-        background: linear-gradient(
-          to bottom,
-          rgba(255, 26, 0, 0.78) 0%,
-          rgba(255, 26, 0, 1) 38%,
-          rgba(255, 26, 0, 1) 54%,
-          rgba(255, 26, 0, 0.57) 100%
-        );
+        background: linear-gradient(to bottom, rgba(255, 26, 0, 0.78) 0%, rgba(255, 26, 0, 1) 38%, rgba(255, 26, 0, 1) 54%, rgba(255, 26, 0, 0.57) 100%);
         box-shadow: inset 0 0 2px 0px white;
         transition: box-shadow 0.3s, background 0.3s;
 
@@ -1350,10 +1134,10 @@ export default {
 
 .layer-enter-active {
   // transition: opacity 0.5s ease;
-  animation: startanim1 0.35s;
+  animation: startanim1 5s;
 }
 .layer-leave-active {
-  animation: endanim1 0.35s;
+  animation: endanim1 5s;
 }
 // .layer-enter-from,
 // .layer-leave-to {

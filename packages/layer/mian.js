@@ -1,7 +1,6 @@
 import { createVNode, render, isVNode } from "vue";
 import LayerVueConstructor, { merge } from "./main.vue";
 const data = {
-  // 默认开启
   defvisible: false,
   endanim: false,
   // 最大化按钮
@@ -57,15 +56,15 @@ let LayerVue = (app) => {
     if (options.id) {
       let index = findIndex(options.id, LayerOptions);
       console.log(index);
-      const vm = LayerOptions.instances[index];
-      if (vm) {
-        if (!vm.destroyOnClose) {
-          if (vm.model) {
-            vm.defvisible = true;
+      const vNode = LayerOptions.instances[index];
+      if (vNode) {
+        if (!vNode.destroyOnClose) {
+          if (vNode.model) {
+            vNode.defvisible = true;
           } else {
-            vm.$emit("update:visible", true);
-            if (!vm.defvisible) {
-              vm.defvisible = true;
+            vNode.$emit("update:visible", true);
+            if (!vNode.defvisible) {
+              vNode.defvisible = true;
             }
           }
         }
@@ -78,7 +77,6 @@ let LayerVue = (app) => {
     delete options.visible;
     const newdata = { ...data };
     // console.log(LayerVueConstructor.setup());
-    
     const newLayerVueConstructor = { ...LayerVueConstructor };
     // 合并全局皮肤配置到默认配置
     const { skin } = LayerOptions;
@@ -112,35 +110,36 @@ let LayerVue = (app) => {
     newLayerVueConstructor.data = () => {
       return { ...newdata };
     };
-    const vm = createVNode(newLayerVueConstructor, { ...options }, isVNode(content) ? { default: () => content } : null);
-    vm.props.onDestroy = () => {
-      if (vm.props.destroyOnClose) {
-        console.log(vm);
-        
-        delete LayerOptions.instances[index]
-        render(null, container)
-      }
-    }
-    vm.appContext = app._context;
+    const vNode = createVNode(newLayerVueConstructor, { ...options }, isVNode(content) ? { default: () => content } : null);
+    console.log("createVNode", vNode, vNode.component);
+    vNode.props.onDestroy = () => {
+      render(null, container);
+      delete LayerOptions.instances[index];
+    };
+
+    vNode.appContext = app._context;
+
     const container = document.createElement("div");
-    render(vm, container);
+    render(vNode, container);
+    console.log("rendervNode", vNode, vNode.component);
     if (document.querySelector(options.el || "#app")) {
       document.querySelector(options.el || "#app").appendChild(container.firstElementChild);
     } else {
       document.body.appendChild(container.firstElementChild);
     }
-    vm.component.proxy.titlexxx='123131231231'
-    vm.component.proxy.defvisible = true;
-    console.log(vm.component.proxy);
-    
+    console.log("appendChild", vNode, vNode.component);
+    vNode.component.proxy.titlexxx = "123131231231";
+    vNode.component.proxy.defvisible = true;
+    console.log(vNode.component.proxy);
+
     return index;
   };
   layer.close = async (index) => {
     const LayerOptions = app.config.globalProperties.$layer.o;
     index = findIndex(index, LayerOptions);
-    const vm = LayerOptions.instances[index];
-    if (vm) {
-      let result = await vm.closefun();
+    const vNode = LayerOptions.instances[index];
+    if (vNode) {
+      let result = await vNode.closefun();
       return result;
     } else {
       LayerOptions.log && console.warn("[layer-warn]:No layer with index ：layer-vue-" + index + " found");
@@ -150,9 +149,9 @@ let LayerVue = (app) => {
   layer.reset = (index) => {
     const LayerOptions = app.config.globalProperties.$layer.o;
     index = findIndex(index, LayerOptions);
-    const vm = LayerOptions.instances[index];
-    if (vm) {
-      vm.resetfun();
+    const vNode = LayerOptions.instances[index];
+    if (vNode) {
+      vNode.resetfun();
       return true;
     } else {
       LayerOptions.log && console.warn("[layer-warn]:No layer with index ：layer-vue-" + index + " found");
@@ -173,9 +172,9 @@ let LayerVue = (app) => {
   layer.full = (index) => {
     const LayerOptions = app.config.globalProperties.$layer.o;
     index = findIndex(index, LayerOptions);
-    const vm = LayerOptions.instances[index];
-    if (vm && vm.maxbtn === false) {
-      vm.maxfun();
+    const vNode = LayerOptions.instances[index];
+    if (vNode && vNode.maxbtn === false) {
+      vNode.maxfun();
       return true;
     } else {
       LayerOptions.log && console.warn("[layer-warn]:No layer with index ：layer-vue-" + index + " found");
@@ -185,9 +184,9 @@ let LayerVue = (app) => {
   layer.min = (index) => {
     const LayerOptions = app.config.globalProperties.$layer.o;
     index = findIndex(index, LayerOptions);
-    const vm = LayerOptions.instances[index];
-    if (vm && vm.minbtn === false) {
-      vm.maxfun();
+    const vNode = LayerOptions.instances[index];
+    if (vNode && vNode.minbtn === false) {
+      vNode.maxfun();
       return true;
     } else {
       LayerOptions.log && console.warn("[layer-warn]:No layer with index ：layer-vue-" + index + " found");
@@ -197,9 +196,9 @@ let LayerVue = (app) => {
   layer.restore = (index) => {
     const LayerOptions = app.config.globalProperties.$layer.o;
     index = findIndex(index, LayerOptions);
-    const vm = LayerOptions.instances[index];
-    if (vm) {
-      vm.restorefun();
+    const vNode = LayerOptions.instances[index];
+    if (vNode) {
+      vNode.restorefun();
       return true;
     } else {
       LayerOptions.log && console.warn("[layer-warn]:No layer with index ：layer-vue-" + index + " found");
@@ -209,15 +208,15 @@ let LayerVue = (app) => {
   layer.openAgain = (index) => {
     const LayerOptions = app.config.globalProperties.$layer.o;
     index = findIndex(index, LayerOptions);
-    const vm = LayerOptions.instances[index];
-    if (vm) {
-      if (!vm.destroyOnClose && vm.defvisible === false) {
-        if (vm.model) {
-          vm.defvisible = true;
+    const vNode = LayerOptions.instances[index];
+    if (vNode) {
+      if (!vNode.destroyOnClose && vNode.defvisible === false) {
+        if (vNode.model) {
+          vNode.defvisible = true;
         } else {
-          vm.$emit("update:visible", true);
-          if (!vm.defvisible) {
-            vm.defvisible = true;
+          vNode.$emit("update:visible", true);
+          if (!vNode.defvisible) {
+            vNode.defvisible = true;
           }
         }
         return true;
@@ -232,10 +231,10 @@ let LayerVue = (app) => {
   layer.setTitle = (index, value) => {
     const LayerOptions = app.config.globalProperties.$layer.o;
     index = findIndex(index, LayerOptions);
-    const vm = LayerOptions.instances[index];
-    console.log(vm);
-    if (vm.model) {
-      vm.$data.deftitle = value;
+    const vNode = LayerOptions.instances[index];
+    console.log(vNode);
+    if (vNode.model) {
+      vNode.$data.deftitle = value;
       return true;
     }
     return false;
@@ -243,20 +242,20 @@ let LayerVue = (app) => {
   // layer.setContent = (index, value) => {
   //   const LayerOptions = app.config.globalProperties.$layer.o;
   //   index = findIndex(index, LayerOptions);
-  //   const vm = LayerOptions.instances[index];
-  //   if (vm.model) {
-  //     if (vm._ishtml) {
-  //     } else if (vm._isComponent) {
+  //   const vNode = LayerOptions.instances[index];
+  //   if (vNode.model) {
+  //     if (vNode._ishtml) {
+  //     } else if (vNode._isComponent) {
   //       document
-  //         .getElementById("layer-vue-" + vm.index)
+  //         .getElementById("layer-vue-" + vNode.index)
   //         .querySelector(".layer-vue-content")
   //         .removeChild(
   //           document
-  //             .getElementById("layer-vue-" + vm.index)
+  //             .getElementById("layer-vue-" + vNode.index)
   //             .querySelector(".layer-vue-content").children[0]
   //         );
-  //       let chlidinstance = new vm.content.component({
-  //         parent: vm,
+  //       let chlidinstance = new vNode.content.component({
+  //         parent: vNode,
   //         propsData: value
   //       });
   //       for (const key in instances.Vuecomponent.$data) {
@@ -264,13 +263,13 @@ let LayerVue = (app) => {
   //           chlidinstance.$data[key] = instances.Vuecomponent.$data[key];
   //         }
   //       }
-  //       chlidinstance.vm = chlidinstance.$mount();
-  //       instances.instance.$children = [chlidinstance.vm];
+  //       chlidinstance.vNode = chlidinstance.$mount();
+  //       instances.instance.$children = [chlidinstance.vNode];
   //       instances.Vuecomponent = chlidinstance;
   //       document
   //         .getElementById("layer-vue-" + instances.instance.index)
   //         .querySelector(".layer-vue-content")
-  //         .appendChild(chlidinstance.vm.$el);
+  //         .appendChild(chlidinstance.vNode.$el);
   //     } else {
   //       document
   //         .getElementById("layer-vue-" + instances.instance.index)
