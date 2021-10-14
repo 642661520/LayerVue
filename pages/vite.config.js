@@ -4,7 +4,7 @@ const { resolve } = require('path');
 console.log(process.env);
 export default defineConfig({
   build: {
-    outDir: '../dist',
+    outDir: '../docs',
   },
   plugins: [vue()],
 });
