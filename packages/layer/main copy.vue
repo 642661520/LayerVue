@@ -1,111 +1,119 @@
 <template>
-  <div
-    v-cloak
-    v-if="destroyOnClose ? defvisible : true"
-    οndragstart="return false;"
-    :data-index="index"
-    :data-anim="anim"
-    :data-id="id"
-    class="layer-vue"
-    :id="'layer-vue-' + index"
-    :data-skin="typeof defskin === 'string' ? defskin : ''"
-    :class="{ 'layer-vue-ismax': maxbtn, 'layer-vue-ismin': minbtn, startanim: defvisible, endanim: isOutAnim && (!visible || endanim) }"
-    :style="{
-      '--mc': defskin.maxmin ? defskin.maxmin.color : '',
-      '--cc': defskin.close ? defskin.close.color : '',
-      '--mbc': defskin.maxmin ? defskin.maxmin.background : '',
-      '--cbc': defskin.close ? defskin.close.background : '',
-      '--mch': defskin.maxmin ? defskin.maxmin.colorHover : '',
-      '--cch': defskin.close ? defskin.close.colorHover : '',
-      '--mbch': defskin.maxmin ? defskin.maxmin.backgroundHover : '',
-      '--cbch': defskin.close ? defskin.close.backgroundHover : '',
-      'box-shadow': defskin.boxShadow,
-      background: defskin.background,
-      width: width + 'px',
-      height: height + 'px',
-      top: y + 'px',
-      left: x + 'px',
-      'z-index': zIndex,
-      display: defvisible ? '' : 'none',
-      position: fixed ? 'fixed' : 'absolute',
-    }"
-    @mousedown="settopfun"
-  >
+  <transition name="layer" @before-enter="beforeenter" @enter="enter" @after-enter="afterenter" @after-leave="afterleave">
     <div
-      v-if="deftitle"
-      class="layer-vue-title"
+      v-if="model ? true : destroyOnClose ? defvisible : true"
+      v-show="defvisible"
+      οndragstart="return false;"
+      :data-index="index"
+      :data-anim="anim"
+      :data-id="id"
+      class="layer-vue"
+      :id="'layer-vue-' + index"
+      :data-skin="typeof defskin === 'string' ? defskin : ''"
+      :class="{ 'layer-vue-ismax': maxbtn, 'layer-vue-ismin': minbtn }"
       :style="{
-        background: defskin.title ? defskin.title.background : '',
-        color: defskin.title ? defskin.title.color : '',
-        'border-bottom': defskin.title ? defskin.title.borderBottom : '',
-        height: titleheight + 'px',
-        'line-height': titleheight + 'px',
+        '--mc': defskin.maxmin ? defskin.maxmin.color : '',
+        '--cc': defskin.close ? defskin.close.color : '',
+        '--mbc': defskin.maxmin ? defskin.maxmin.background : '',
+        '--cbc': defskin.close ? defskin.close.background : '',
+        '--mch': defskin.maxmin ? defskin.maxmin.colorHover : '',
+        '--cch': defskin.close ? defskin.close.colorHover : '',
+        '--mbch': defskin.maxmin ? defskin.maxmin.backgroundHover : '',
+        '--cbch': defskin.close ? defskin.close.backgroundHover : '',
+        'box-shadow': defskin.boxShadow,
+        background: defskin.background,
+        width: width + 'px',
+        height: height + 'px',
+        top: y + 'px',
+        left: x + 'px',
+        'z-index': zIndex,
+        position: fixed ? 'fixed' : 'absolute',
       }"
-      @mousedown="minmovefun"
+      @mousedown="settopfun"
     >
-      <div class="layer-vue-title-text" :title="deftitle" :style="{ width: textwidth + 'px' }">{{ deftitle }}</div>
-      <div class="layer-vue-tools" :style="{ height: titleheight + 'px', 'line-height': titleheight + 'px' }">
-        <span v-show="maxmin[1]" class="layer-vue-min" @click="minfun">
-          <svg v-show="!minbtn" t="1623989554257" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2299" width="16" height="16">
-            <path d="M128 512h768a25.6 25.6 0 1 1 0 51.2h-768a25.6 25.6 0 1 1 0-51.2z" p-id="2300"></path>
-          </svg>
-          <svg v-show="minbtn" t="1623989831113" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2537" width="16" height="16">
-            <path
-              d="M959.72 0H294.216a63.96 63.96 0 0 0-63.96 63.96v127.92H64.28A63.96 63.96 0 0 0 0.32 255.84V959.4a63.96 63.96 0 0 0 63.96 63.96h703.56a63.96 63.96 0 0 0 63.96-63.96V792.465h127.92a63.96 63.96 0 0 0 63.96-63.96V63.96A63.96 63.96 0 0 0 959.72 0zM767.84 728.505V959.4H64.28V255.84h703.56z m189.322 0H831.8V255.84a63.96 63.96 0 0 0-63.96-63.96H294.216V63.96H959.72z"
-              p-id="2538"
-            ></path>
-          </svg>
-        </span>
-        <span v-show="maxmin[0] && !minbtn" class="layer-vue-max" @click="maxfun">
-          <svg v-show="!maxbtn" t="1623988846084" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1720" width="16" height="16">
-            <path
-              d="M918.14912 546.53952l0 282.50112c0 48.85504-39.76192 88.59648-88.6272 88.59648l-634.9824 0c-48.87552 0-88.63744-39.74144-88.63744-88.59648L105.90208 194.74432c0-48.85504 39.76192-88.60672 88.63744-88.60672L477.7984 106.1376c-15.24736 15.64672-25.38496 36.29056-27.60704 59.22816L194.52928 165.36576c-16.20992 0-29.39904 13.17888-29.39904 29.37856l0 634.29632c0 16.18944 13.18912 29.36832 29.39904 29.36832l634.9824 0c16.20992 0 29.39904-13.17888 29.39904-29.36832L858.91072 574.1056C881.2032 571.96544 901.888 562.37056 918.14912 546.53952zM573.93152 188.90752l193.6384 0L454.13376 502.35392c-17.34656 17.34656-17.34656 45.47584 0 62.8224 17.34656 17.34656 45.47584 17.34656 62.8224 0.01024l313.43616-313.4464 0 193.64864c0 24.53504 19.88608 44.42112 44.42112 44.42112 12.26752 0 23.37792-4.95616 31.41632-13.0048 8.0384-8.05888 13.01504-19.1488 13.01504-31.41632L919.2448 144.47616c0-24.53504-19.88608-44.42112-44.42112-44.42112L573.93152 100.05504c-24.53504 0-44.42112 19.88608-44.42112 44.43136C529.50016 169.02144 549.39648 188.90752 573.93152 188.90752z"
-              p-id="1721"
-            ></path>
-          </svg>
-          <svg v-show="maxbtn" t="1623989831113" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2537" width="16" height="16">
-            <path
-              d="M959.72 0H294.216a63.96 63.96 0 0 0-63.96 63.96v127.92H64.28A63.96 63.96 0 0 0 0.32 255.84V959.4a63.96 63.96 0 0 0 63.96 63.96h703.56a63.96 63.96 0 0 0 63.96-63.96V792.465h127.92a63.96 63.96 0 0 0 63.96-63.96V63.96A63.96 63.96 0 0 0 959.72 0zM767.84 728.505V959.4H64.28V255.84h703.56z m189.322 0H831.8V255.84a63.96 63.96 0 0 0-63.96-63.96H294.216V63.96H959.72z"
-              p-id="2538"
-            ></path>
-          </svg>
-        </span>
-        <span v-show="closeBtn" class="layer-vue-close" @click="closefun">
-          <svg t="1623989504811" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2061" width="16" height="16">
-            <path
-              d="M563.3 509l352.3-352.3c13.9-13.9 13.9-36.4 0-50.3-13.9-13.9-36.4-13.9-50.3 0L513 458.7 160.7 106.4c-13.9-13.9-36.4-13.9-50.3 0-13.9 13.9-13.9 36.4 0 50.3L462.7 509 110.4 861.3c-13.9 13.9-13.9 36.4 0 50.3 6.9 6.9 16.1 10.4 25.2 10.4s18.2-3.5 25.2-10.4L513 559.3l352.3 352.3c6.9 6.9 16.1 10.4 25.2 10.4s18.2-3.5 25.2-10.4c13.9-13.9 13.9-36.4 0-50.3L563.3 509z"
-              p-id="2062"
-            ></path>
-          </svg>
-        </span>
+      <div
+        v-if="deftitle"
+        class="layer-vue-title"
+        :style="{
+          background: defskin.title ? defskin.title.background : '',
+          color: defskin.title ? defskin.title.color : '',
+          'border-bottom': defskin.title ? defskin.title.borderBottom : '',
+          height: titleheight + 'px',
+          'line-height': titleheight + 'px',
+        }"
+        @mousedown="minmovefun"
+      >
+        <div class="layer-vue-title-text" :title="deftitle" :style="{ width: textwidth + 'px' }">
+          {{ deftitle }}
+        </div>
+        <div
+          class="layer-vue-tools"
+          :style="{
+            height: titleheight + 'px',
+            'line-height': titleheight + 'px',
+          }"
+        >
+          <span v-show="maxmin[1]" class="layer-vue-min" @click="minfun">
+            <svg v-show="!minbtn" t="1623989554257" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2299" width="16" height="16">
+              <path d="M128 512h768a25.6 25.6 0 1 1 0 51.2h-768a25.6 25.6 0 1 1 0-51.2z" p-id="2300"></path>
+            </svg>
+            <svg v-show="minbtn" t="1623989831113" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2537" width="16" height="16">
+              <path
+                d="M959.72 0H294.216a63.96 63.96 0 0 0-63.96 63.96v127.92H64.28A63.96 63.96 0 0 0 0.32 255.84V959.4a63.96 63.96 0 0 0 63.96 63.96h703.56a63.96 63.96 0 0 0 63.96-63.96V792.465h127.92a63.96 63.96 0 0 0 63.96-63.96V63.96A63.96 63.96 0 0 0 959.72 0zM767.84 728.505V959.4H64.28V255.84h703.56z m189.322 0H831.8V255.84a63.96 63.96 0 0 0-63.96-63.96H294.216V63.96H959.72z"
+                p-id="2538"
+              ></path>
+            </svg>
+          </span>
+          <span v-show="maxmin[0] && !minbtn" class="layer-vue-max" @click="maxfun">
+            <svg v-show="!maxbtn" t="1623988846084" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1720" width="16" height="16">
+              <path
+                d="M918.14912 546.53952l0 282.50112c0 48.85504-39.76192 88.59648-88.6272 88.59648l-634.9824 0c-48.87552 0-88.63744-39.74144-88.63744-88.59648L105.90208 194.74432c0-48.85504 39.76192-88.60672 88.63744-88.60672L477.7984 106.1376c-15.24736 15.64672-25.38496 36.29056-27.60704 59.22816L194.52928 165.36576c-16.20992 0-29.39904 13.17888-29.39904 29.37856l0 634.29632c0 16.18944 13.18912 29.36832 29.39904 29.36832l634.9824 0c16.20992 0 29.39904-13.17888 29.39904-29.36832L858.91072 574.1056C881.2032 571.96544 901.888 562.37056 918.14912 546.53952zM573.93152 188.90752l193.6384 0L454.13376 502.35392c-17.34656 17.34656-17.34656 45.47584 0 62.8224 17.34656 17.34656 45.47584 17.34656 62.8224 0.01024l313.43616-313.4464 0 193.64864c0 24.53504 19.88608 44.42112 44.42112 44.42112 12.26752 0 23.37792-4.95616 31.41632-13.0048 8.0384-8.05888 13.01504-19.1488 13.01504-31.41632L919.2448 144.47616c0-24.53504-19.88608-44.42112-44.42112-44.42112L573.93152 100.05504c-24.53504 0-44.42112 19.88608-44.42112 44.43136C529.50016 169.02144 549.39648 188.90752 573.93152 188.90752z"
+                p-id="1721"
+              ></path>
+            </svg>
+            <svg v-show="maxbtn" t="1623989831113" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2537" width="16" height="16">
+              <path
+                d="M959.72 0H294.216a63.96 63.96 0 0 0-63.96 63.96v127.92H64.28A63.96 63.96 0 0 0 0.32 255.84V959.4a63.96 63.96 0 0 0 63.96 63.96h703.56a63.96 63.96 0 0 0 63.96-63.96V792.465h127.92a63.96 63.96 0 0 0 63.96-63.96V63.96A63.96 63.96 0 0 0 959.72 0zM767.84 728.505V959.4H64.28V255.84h703.56z m189.322 0H831.8V255.84a63.96 63.96 0 0 0-63.96-63.96H294.216V63.96H959.72z"
+                p-id="2538"
+              ></path>
+            </svg>
+          </span>
+          <span v-show="closeBtn" class="layer-vue-close" @click="closefun">
+            <svg t="1623989504811" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2061" width="16" height="16">
+              <path
+                d="M563.3 509l352.3-352.3c13.9-13.9 13.9-36.4 0-50.3-13.9-13.9-36.4-13.9-50.3 0L513 458.7 160.7 106.4c-13.9-13.9-36.4-13.9-50.3 0-13.9 13.9-13.9 36.4 0 50.3L462.7 509 110.4 861.3c-13.9 13.9-13.9 36.4 0 50.3 6.9 6.9 16.1 10.4 25.2 10.4s18.2-3.5 25.2-10.4L513 559.3l352.3 352.3c6.9 6.9 16.1 10.4 25.2 10.4s18.2-3.5 25.2-10.4c13.9-13.9 13.9-36.4 0-50.3L563.3 509z"
+                p-id="2062"
+              ></path>
+            </svg>
+          </span>
+        </div>
+      </div>
+      <span v-show="closeBtn && !title" :class="{ 'layer-vue-close2': !title }" @click="closefun">
+        <svg t="1623989504811" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2061" width="16" height="16">
+          <path
+            d="M563.3 509l352.3-352.3c13.9-13.9 13.9-36.4 0-50.3-13.9-13.9-36.4-13.9-50.3 0L513 458.7 160.7 106.4c-13.9-13.9-36.4-13.9-50.3 0-13.9 13.9-13.9 36.4 0 50.3L462.7 509 110.4 861.3c-13.9 13.9-13.9 36.4 0 50.3 6.9 6.9 16.1 10.4 25.2 10.4s18.2-3.5 25.2-10.4L513 559.3l352.3 352.3c6.9 6.9 16.1 10.4 25.2 10.4s18.2-3.5 25.2-10.4c13.9-13.9 13.9-36.4 0-50.3L563.3 509z"
+            p-id="2062"
+          ></path>
+        </svg>
+      </span>
+      <div v-if="resize[0] && !maxbtn" class="layer-vue-resize" @mousedown="rbresizefun"></div>
+      <div v-if="resize[1] && !maxbtn" class="layer-vue-lbresize" @mousedown="lbresizefun"></div>
+      <div
+        ref="content"
+        class="layer-vue-content"
+        :style="{
+          'border-radius': title ? '0 0 2px 2px' : '2px',
+          background: defskin.content ? defskin.content.background : '',
+          color: defskin.content ? defskin.content.color : '',
+          height: contentheight + 'px',
+        }"
+      >
+        <slot>{{ content }}</slot>
       </div>
     </div>
-    <span v-show="closeBtn && !title" :class="{ 'layer-vue-close2': !title }" @click="closefun">
-      <svg t="1623989504811" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2061" width="16" height="16">
-        <path
-          d="M563.3 509l352.3-352.3c13.9-13.9 13.9-36.4 0-50.3-13.9-13.9-36.4-13.9-50.3 0L513 458.7 160.7 106.4c-13.9-13.9-36.4-13.9-50.3 0-13.9 13.9-13.9 36.4 0 50.3L462.7 509 110.4 861.3c-13.9 13.9-13.9 36.4 0 50.3 6.9 6.9 16.1 10.4 25.2 10.4s18.2-3.5 25.2-10.4L513 559.3l352.3 352.3c6.9 6.9 16.1 10.4 25.2 10.4s18.2-3.5 25.2-10.4c13.9-13.9 13.9-36.4 0-50.3L563.3 509z"
-          p-id="2062"
-        ></path>
-      </svg>
-    </span>
-    <div v-if="resize[0] && !maxbtn" class="layer-vue-resize" @mousedown="rbresizefun"></div>
-    <div v-if="resize[1] && !maxbtn" class="layer-vue-lbresize" @mousedown="lbresizefun"></div>
-    <div
-      ref="content"
-      class="layer-vue-content"
-      :style="{
-        'border-radius': title ? '0 0 2px 2px' : '2px',
-        background: defskin.content ? defskin.content.background : '',
-        color: defskin.content ? defskin.content.color : '',
-        height: contentheight + 'px',
-      }"
-    >
-      <slot>{{ !model ? content : null }}</slot>
-    </div>
-  </div>
+  </transition>
 </template>
 <script>
-import {getCurrentInstance } from "vue";
 const merge = (options, def) => {
   for (let key in def) {
     if (options[key] === undefined) {
@@ -116,43 +124,9 @@ const merge = (options, def) => {
   }
   return options;
 };
-
+export { merge };
 export default {
   name: "LayerVue",
-  data() {
-    return {
-      // 默认开启
-      defvisible: true,
-      endanim: false,
-      // 最大化按钮
-      maxbtn: false,
-      minbtn: false,
-      // 最小宽度
-      minwidth: 300,
-      // 最小高度
-      minheight: 200,
-      // left
-      x: 0,
-      // top
-      y: 0,
-      width: 0,
-      height: 0,
-      zIndex: 1,
-      // 序号
-      index: undefined,
-      // 模式
-      model: undefined,
-      // display
-      display: undefined,
-      // 皮肤
-      defskin: {},
-      // 用于记录初始状态
-      initdata: { x: 0, y: 0, width: 300, height: 200 },
-      defborderwidth: 0,
-      l: {},
-      deftitle: undefined,
-    };
-  },
   props: {
     title: { type: [String, Boolean], default: "信息" },
     area: { type: [String, Array], default: "auto" },
@@ -181,13 +155,17 @@ export default {
     skin: { type: [Object, String] },
     id: { type: String, default: undefined },
     reset: { type: Boolean },
-    el: {},
     fixed: { type: Boolean, default: true },
     minarea: { type: [Number, Array], default: () => [300, 200] },
     isOutAnim: { type: [Boolean, Number], default: true },
     boderwidth: { type: Number, default: 0 },
     isMax: { type: Boolean, default: false },
     shape: { type: Array, default: () => [0, 0] },
+  },
+  emits: ["destroy", "update:visible", "update:isMax"],
+  setup(props, { attrs, slots, emit }) {
+    const tttt = 1;
+    return { tttt };
   },
   computed: {
     contentheight: function () {
@@ -209,13 +187,7 @@ export default {
   },
   watch: {
     visible: function (newvalue) {
-      if (this.anim) {
-        setTimeout(() => {
-          this.defvisible = newvalue;
-        }, 300);
-      } else {
-        this.defvisible = newvalue;
-      }
+      this.defvisible = newvalue;
     },
     defvisible: function (newvalue) {
       if (newvalue) {
@@ -254,17 +226,13 @@ export default {
     },
   },
   created() {
-    if (!this.visible) {
-      this.defvisible = this.visible;
-    }
+    console.log(this.id, "created");
     this.deftitle = this.title;
-    const { ctx } = getCurrentInstance();
-    console.log(this,this.$layer,this._a);
-    
     this.defskin = this.$layer.o.skin;
     window.addEventListener("resize", this.resizefun);
     if (this.visible || this.visible === undefined) {
       if (this.settop) {
+        console.log(this.id, "settop");
         const zindex = this.$layer.o.settop();
         this.zIndex = zindex;
       } else {
@@ -273,12 +241,15 @@ export default {
     }
   },
   mounted() {
+    console.log(this.id, "mounted");
     const { width, height } = this.minareainit();
     this.minwidth = width;
     this.minheight = height;
     if (!this.model) {
       this.index = this.$layer.o.instances.length;
-      this.$layer.o.instances.push({ instance: this });
+      this.$layer.o.instances.push(this);
+    } else {
+      this.$layer.o.instances[this.index] = this;
     }
     if (typeof this.skin === "object") {
       if (typeof this.defskin === "object") {
@@ -289,39 +260,10 @@ export default {
     } else if (typeof this.skin === "string") {
       this.defskin = this.skin;
     }
-    this.$nextTick(() => {
-      if (this.content && this.content.component) {
-        let instance = new this.content.component({
-          parent: this,
-          propsData: this.content.data,
-        });
-        instance.vm = instance.$mount();
-        this.$layer.o.instances[this.index].Vuecomponent = instance;
-        document
-          .getElementById("layer-vue-" + this.index)
-          .querySelector(".layer-vue-content")
-          .appendChild(instance.vm.$el);
-      }
-      try {
-        if (this.$refs.content.children.length) {
-          this.display = this.$refs.content.children[0].style.display;
-        }
-      } catch (error) {
-        this.$layer.o.log && console.warn("[layer warn]:not find children");
-      }
-      if (this.visible || this.visible === undefined) {
-        if (this.settop) {
-          const zindex = this.$layer.o.settop();
-          this.zIndex = zindex;
-        } else {
-          this.zIndex = this.zindex;
-        }
-        this.init();
-        this.success && this.success(this.$el, this.index, this.id);
-      }
-    });
+    this.defvisible = this.visible;
   },
-  beforeDestroy() {
+  beforeUnmount() {
+    console.log("beforeUnmount");
     window.removeEventListener("resize", this.resizefun);
   },
   methods: {
@@ -390,8 +332,21 @@ export default {
       this.width = this.initdata.width;
       this.height = this.initdata.height;
     },
+    beforeenter() {},
+    enter() {},
+    afterenter() {
+      console.log("afterenter");
+      try {
+        if (this.$refs.content.children.length) {
+          this.display = this.$refs.content.children[0].style.display;
+        }
+      } catch (error) {
+        this.$layer.o.log && console.warn("[layer warn]:not find children");
+      }
+    },
     // 初始化函数
     init() {
+      console.log("this.init");
       this.maxbtn = false;
       this.minbtn = false;
       if (this.$refs.content.children.length) {
@@ -559,104 +514,34 @@ export default {
       }
       return name;
     },
+    afterleave() {
+      console.log("afterleave");
+      if (this.destroyOnClose) {
+        if (this.model) {
+          this.$emit("destroy");
+        }
+        this.end && this.end();
+      } else {
+        this.cancel && this.cancel(this.$el, this.index, this.id);
+      }
+    },
     // 关闭窗口函数
     close() {
-      // 隐藏窗口
       if (!this.defvisible) {
         this.$layer.o.log && console.warn("[layer-warn]layer-vue-" + this.index + " is closed");
         return false;
       }
-      this.defvisible = false;
-      if (!this.model) {
-        // 若传入了visible，则更新visible为false
+      this.$emit("update:visible", false);
+      this.$nextTick(() => {
         if (this.visible) {
-          this.$emit("update:visible", false);
+          this.defvisible = false;
         }
-      }
-      this.cancel && this.cancel(this.$el, this.index, this.id);
-      if (!this.destroyOnClose) {
-        return true;
-      }
-      // 获取窗口DOM元素
-      const layerDOM = document.getElementById("layer-vue-" + this.index);
-      const warn = () => console.warn("[layer-warn]:No layer with id ：layer-vue-" + this.index + "found");
-      // 判断当前layer窗口打开模式（true：以$layer.open()打开，false:以组件形式）
-      if (this.model) {
-        // this.visible=false
-        // 窗口配置项，关闭后则为null
-        const instances = this.$layer.o.instances[this.index];
-        // 判断窗口配置项是否存在
-        if (instances) {
-          // 判断内容区是否是DOM
-          if (instances.instance._ishtml) {
-            // 判断窗口DOM元素是否存在
-            if (layerDOM) {
-              // 获取内容区外层DOM
-              const content = layerDOM.querySelector(".layer-vue-content");
-              // 判断内容区是否是新建DOM
-              if (instances.instance._isnewDOM) {
-                // 删除新建DOM
-                content.removeChild(content.children[0]);
-              } else {
-                // 判断窗口父元素是否存在
-                if (layerDOM.parentNode) {
-                  // 还原内容区位置
-                  const parentDiv = layerDOM.parentNode;
-                  content.children[0].style.display = this.display;
-                  parentDiv.insertBefore(content.children[0], layerDOM);
-                  parentDiv.removeChild(layerDOM);
-                  this.$destroy();
-                  delete this.$layer.o.instances[this.index];
-                  // 销毁窗口回调
-                  this.end && this.end(this.$el, this.index, this.id);
-                } else {
-                  // 窗口不存在或已经关闭
-                  this.$layer.o.log && warn();
-                  return false;
-                }
-                return true;
-              }
-            } else {
-              // 窗口不存在或已经关闭
-              this.$layer.o.log && warn();
-              return false;
-            }
-            // 判断子组件是否存在
-          } else if (instances.Vuecomponent) {
-            instances.Vuecomponent.$destroy();
-          }
-        }
-        let node = document.body;
-        // 判断#app是否存在
-        if (document.querySelector(this.el)) {
-          node = document.querySelector(this.el);
-        }
-        // 判断layer窗口是否存在
-        if (layerDOM) {
-          // 删除layerDOM
-          node.removeChild(layerDOM);
-          this.$destroy();
-          delete this.$layer.o.instances[this.index];
-        } else {
-          this.$layer.o.log && warn();
-          return false;
-        }
-      }
-      this.end && this.end(this.$el, this.index, this.id);
-      return true;
+      });
     },
     closefun() {
-      return new Promise((res, rej) => {
-        if (this.anim && this.isOutAnim) {
-          this.endanim = true;
-          setTimeout(() => {
-            let result = this.close();
-            res(result);
-          }, 300);
-        } else {
-          let result = this.close();
-          res(result);
-        }
+      return new Promise((res) => {
+        let result = this.close();
+        res(result);
       });
     },
     maxfun() {
@@ -859,13 +744,8 @@ export default {
     },
   },
 };
-export { merge };
 </script>
 <style lang="less">
-[v-cloak] {
-  display: none;
-}
-
 .layer-vue {
   border-radius: 2px;
   background: white;
@@ -906,7 +786,7 @@ export { merge };
     .layer-vue-min,
     .layer-vue-max {
       background: var(--mbc);
-      fill: var(--mc);
+      fill: v-bind("defskin.maxmin?.color");
     }
 
     .layer-vue-min:hover,
@@ -1210,47 +1090,15 @@ export { merge };
       }
     }
   }
-
-  &.startanim[data-anim="1"] {
-    animation: startanim1 0.3s;
-  }
-
-  &.endanim[data-anim="1"] {
-    animation: endanim1 0.35s;
-  }
-
-  &.startanim[data-anim="2"] {
-    animation: startanim2 0.3s;
-  }
-
-  &.endanim[data-anim="2"] {
-    animation: endanim2 0.35s;
-  }
-
-  &.startanim[data-anim="3"] {
-    animation: startanim3 0.3s;
-  }
-
-  &.endanim[data-anim="3"] {
-    animation: endanim3 0.35s;
-  }
-
-  &.startanim[data-anim="4"] {
-    animation: startanim4 0.3s;
-  }
-
-  &.endanim[data-anim="4"] {
-    animation: endanim4 0.35s;
-  }
-
-  &.startanim[data-anim="5"] {
-    animation: startanim5 0.3s;
-  }
-
-  &.endanim[data-anim="5"] {
-    animation: endanim5 0.35s;
-  }
 }
+
+.layer-enter-active[data-anim="1"] {
+  animation: startanim1 0.35s;
+}
+.layer-leave-active[data-anim="1"] {
+  animation: endanim1 0.35s;
+}
+
 
 @keyframes startanim1 {
   from {

@@ -18,16 +18,18 @@
   },
   "version": "0.0.0",
   "scripts": {
-    "dev": "vite --host --open",
-    "build": "vite build",
+    "test dev": "vite --host --open",
+    "lib": "vite build",
+    "pages dev": "vite pages --host --open",
+    "pages build": "vite build pages",
     "serve": "vite preview"
   },
   "dependencies": {
-    "vue": "^3.0.5"
+    "vue": "^3.2.20"
   },
   "devDependencies": {
-    "@vitejs/plugin-vue": "^1.2.3",
-    "@vue/compiler-sfc": "^3.0.5",
+    "@vitejs/plugin-vue": "^1.9.3",
+    "@vue/compiler-sfc": "^3.2.20",
     "less": "^4.1.1",
     "vite": "^2.3.8"
   },

@@ -1090,59 +1090,15 @@ export default {
       }
     }
   }
-
-  &.startanim[data-anim="1"] {
-    animation: startanim1 0.3s;
-  }
-
-  &.endanim[data-anim="1"] {
-    animation: endanim1 0.35s;
-  }
-
-  &.startanim[data-anim="2"] {
-    animation: startanim2 0.3s;
-  }
-
-  &.endanim[data-anim="2"] {
-    animation: endanim2 0.35s;
-  }
-
-  &.startanim[data-anim="3"] {
-    animation: startanim3 0.3s;
-  }
-
-  &.endanim[data-anim="3"] {
-    animation: endanim3 0.35s;
-  }
-
-  &.startanim[data-anim="4"] {
-    animation: startanim4 0.3s;
-  }
-
-  &.endanim[data-anim="4"] {
-    animation: endanim4 0.35s;
-  }
-
-  &.startanim[data-anim="5"] {
-    animation: startanim5 0.3s;
-  }
-
-  &.endanim[data-anim="5"] {
-    animation: endanim5 0.35s;
-  }
 }
 
-.layer-enter-active {
-  // transition: opacity 0.5s ease;
-  animation: startanim1 5s;
+.layer-enter-active[data-anim="1"] {
+  animation: startanim1 0.35s;
 }
-.layer-leave-active {
-  animation: endanim1 5s;
+.layer-leave-active[data-anim="1"] {
+  animation: endanim1 0.35s;
 }
-// .layer-enter-from,
-// .layer-leave-to {
-//   opacity: 0;
-// }
+
 
 @keyframes startanim1 {
   from {
